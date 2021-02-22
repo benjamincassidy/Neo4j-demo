@@ -20,8 +20,9 @@ dependencies {
     // Use JUnit test framework.
     testImplementation 'junit:junit:4.13'
 
-    // This dependency is used by the application.
-    implementation 'com.google.guava:guava:29.0-jre'
+    implementation 'org.neo4j.driver:neo4j-java-driver:4.2.0'
+    implementation 'org.neo4j:neo4j-ogm-core:3.2.20'
+    runtime 'org.neo4j:neo4j-ogm-bolt-driver:3.2.20'
 }
 
 application {
