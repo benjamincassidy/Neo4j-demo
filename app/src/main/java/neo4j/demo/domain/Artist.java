@@ -3,32 +3,34 @@ package neo4j.demo.domain;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 
-@NodeEntity
+@NodeEntity(label = "Artist")
 public class Artist {
 
     @Id
-    @GeneratedValue
-    private Long id;
+    private String id;
     @Property
     private String name;
+    @Property
+    private String type;
+    @Property
+    private String disambiguation;
 
     @Relationship(type = Constants.PERFORMS_ON, direction = Relationship.OUTGOING)
-    private Set<Recording> recordings = new HashSet<>();
+    private Set<Release> recordings = new HashSet<>();
 
-    public Artist() {
-    }
-
-    public Artist(String name) {
+    public Artist(String id, String name, String type, String disambiguation) {
+        this.id = id;
         this.name = name;
+        this.type = type;
+        this.disambiguation = disambiguation;
     }
 
-    public void addRecording(Recording recording) {
+    public void addRecording(Release recording) {
         recordings.add(recording);
     }
 }

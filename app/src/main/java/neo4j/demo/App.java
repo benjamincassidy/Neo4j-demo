@@ -1,17 +1,15 @@
 package neo4j.demo;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
-import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
-import org.neo4j.ogm.config.ClasspathConfigurationSource;
-import org.neo4j.ogm.config.Configuration;
-import org.neo4j.ogm.config.ConfigurationSource;
-import org.neo4j.ogm.session.Session;
-import org.neo4j.ogm.session.SessionFactory;
-
+import neo4j.Database;
 import neo4j.demo.model.Artist;
 import neo4j.demo.model.ArtistSearch;
+import neo4j.demo.model.Release;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -20,7 +18,6 @@ import okhttp3.logging.HttpLoggingInterceptor.Level;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
-import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -37,22 +34,42 @@ public class App implements Runnable {
     @Parameters(paramLabel = "<query>", description = "Search query")
     private String searchQuery = "";
 
+    private void searchForArtist() throws IOException {
+        Api api = createApi();
+        Response<ArtistSearch> response = api.searchForArtist(searchQuery).execute();
+        System.out.println("Please make a selection:");
+        List<Artist> artists = response.body().artists;
+        for (int i = 0; i < artists.size(); i++) {
+            Artist artist = artists.get(i);
+            System.out.println("[" + (i + 1) + "] " + artist.name + " (" + artist.disambiguation + ")");
+        }
+        Scanner scanner = new Scanner(System.in);
+        int selection = scanner.nextInt();
+        String artistId = artists.get(selection - 1).id;
+        Response<Artist> artistResponse = api.getArtistById(artistId).execute();
+        Artist artist = artistResponse.body();
+        List<Release> releases = artist.releases.stream().filter(new Predicate<Release>() {
+            @Override
+            public boolean test(Release r) {
+                return r.status.equals("Official");
+            };
+        }).collect(Collectors.toList());
+        Database db = new Database();
+        db.addArtistAndReleases(artist, releases);
+        scanner.close();
+    }
+
     @Override
     public void run() {
         try {
-            Api api = createApi();
             if (ARTIST.equals(entityType)) {
-                Response<ArtistSearch> response = api.searchForArtist(searchQuery).execute();
-                System.out.println("Please make a selection:");
-                for (int i = 0; i < response.body().artists.size(); i++) {
-                    System.out.println("[" + (i + 1) + "] " + response.body().artists.get(i).name);
-                }
-                Scanner scanner = new Scanner(System.in);
-                int selection = scanner.nextInt();
-                System.out.println(selection);
-                scanner.close();
+                searchForArtist();
+            } else if (ALBUM.equals(entityType)) {
+
+            } else {
+                throw new RuntimeException("Unknown command " + entityType);
             }
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             ex.printStackTrace();
             System.exit(1);
         }
