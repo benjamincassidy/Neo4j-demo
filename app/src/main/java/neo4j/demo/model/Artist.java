@@ -12,12 +12,15 @@ public class Artist {
     public String disambiguation;
     @SerializedName("release-groups")
     public List<Release> releases;
+    public List<Relation> relations;
 
     public neo4j.demo.domain.Artist toDomain() {
         neo4j.demo.domain.Artist artist = new neo4j.demo.domain.Artist(id, name, type, disambiguation);
-        releases.forEach((r) -> {
-            artist.addRecording(r.toDomain());
-        });
+        if (releases != null) {
+            releases.forEach((r) -> {
+                artist.addRecording(r.toDomain());
+            });
+        }
         return artist;
     }
 }

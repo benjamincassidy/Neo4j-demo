@@ -13,5 +13,8 @@ public interface Api {
     Call<ArtistSearch> searchForArtist(@Query("query") String query);
 
     @GET("artist/{artistId}?fmt=json&inc=release-groups")
-    Call<Artist> getArtistById(@Path("artistId") String artistId);
+    Call<Artist> getArtistWithReleaseGroups(@Path("artistId") String artistId);
+
+    @GET("artist/{artistId}?fmt=json&inc=artist-rels")
+    Call<Artist> getArtistWithRelatedArtists(@Path("artistId") String artistId);
 }

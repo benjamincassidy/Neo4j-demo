@@ -46,10 +46,14 @@ public class App implements Runnable {
         Scanner scanner = new Scanner(System.in);
         int selection = scanner.nextInt();
         String artistId = artists.get(selection - 1).id;
-        Response<Artist> artistResponse = api.getArtistById(artistId).execute();
+        Response<Artist> artistResponse = api.getArtistWithReleaseGroups(artistId).execute();
         Artist artist = artistResponse.body();
         Database db = new Database();
         db.addArtistAndReleases(artist);
+        if (artist.type.equals("Group")) {
+            artist = api.getArtistWithRelatedArtists(artistId).execute().body();
+            db.addMembersOfBand(artist);
+        }
         scanner.close();
     }
 

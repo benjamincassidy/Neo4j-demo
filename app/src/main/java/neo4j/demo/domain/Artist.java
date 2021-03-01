@@ -23,6 +23,9 @@ public class Artist {
     @Relationship(type = Constants.PERFORMS_ON, direction = Relationship.OUTGOING)
     private Set<Release> recordings = new HashSet<>();
 
+    public Artist() {
+    }
+
     public Artist(String id, String name, String type, String disambiguation) {
         this.id = id;
         this.name = name;
@@ -32,5 +35,9 @@ public class Artist {
 
     public void addRecording(Release recording) {
         recordings.add(recording);
+    }
+
+    public String getId() {
+        return id;
     }
 }
