@@ -12,6 +12,6 @@ public interface Api {
     @GET("artist?fmt=json&limit=5")
     Call<ArtistSearch> searchForArtist(@Query("query") String query);
 
-    @GET("artist/{artistId}?fmt=json&inc=releases")
+    @GET("artist/{artistId}?fmt=json&inc=release-groups")
     Call<Artist> getArtistById(@Path("artistId") String artistId);
 }

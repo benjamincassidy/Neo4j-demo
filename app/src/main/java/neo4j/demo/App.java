@@ -48,14 +48,8 @@ public class App implements Runnable {
         String artistId = artists.get(selection - 1).id;
         Response<Artist> artistResponse = api.getArtistById(artistId).execute();
         Artist artist = artistResponse.body();
-        List<Release> releases = artist.releases.stream().filter(new Predicate<Release>() {
-            @Override
-            public boolean test(Release r) {
-                return r.status.equals("Official");
-            };
-        }).collect(Collectors.toList());
         Database db = new Database();
-        db.addArtistAndReleases(artist, releases);
+        db.addArtistAndReleases(artist);
         scanner.close();
     }
 

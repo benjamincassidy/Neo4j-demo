@@ -18,15 +18,15 @@ public class Release {
     @Property
     private String date;
     @Property
-    private String status;
+    private String type;
 
     @Relationship(type = Constants.PERFORMS_ON, direction = Relationship.INCOMING)
     private Set<Artist> artists = new HashSet<>();
 
-    public Release(String id, String title, String date, String status) {
+    public Release(String id, String title, String date, String type) {
         this.id = id;
         this.title = title;
         this.date = date;
-        this.status = status;
+        this.type = type;
     }
 }
